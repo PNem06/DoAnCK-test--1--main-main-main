@@ -7,7 +7,7 @@
 
     <!-- IMAGE LEFT -->
     <div class="col-md-4 text-center">
-        <img src="https://via.placeholder.com/400x500/764ba2/ffffff?text=<?= urlencode($actor->Actor_Name) ?>" 
+        <img src="uploads/actors/<?=$actor->Actor_Img?>"="<?= urlencode($actor->Actor_Name) ?>" 
              class="img-fluid rounded shadow"
              style="max-height: 450px; object-fit: cover;">
     </div>
@@ -65,7 +65,7 @@
 
                 <div class="card h-100 shadow-sm hover-card">
                     <?php if ($movie->Movie_Img): ?>
-                    <img src="uploads/movies/<?= htmlspecialchars($movie->Movie_Img) ?>" 
+                    <img src="uploads/movies/<?= $movie->Movie_Img ?? 'default-poster.png' ?>" 
                          class="card-img-top" style="height: 200px; object-fit: cover;">
                     <?php else: ?>
                     <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center text-white" 

@@ -23,7 +23,7 @@ if (!$news) {
 
                 <?php if (!empty($news['New_Img'])): ?>
                 <div class="text-center mb-5">
-                    <img src="uploads/<?= htmlspecialchars($news['New_Img']) ?>"
+                    <img src="uploads/news/<?= htmlspecialchars($news['New_Img']) ?>"
                          class="img-fluid rounded-3 shadow-lg"
                          style="max-height: 400px; width:100%; object-fit: cover;"
                          alt="<?= htmlspecialchars($news['New_Title']) ?>">

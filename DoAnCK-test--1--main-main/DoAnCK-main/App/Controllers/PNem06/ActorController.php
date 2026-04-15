@@ -1,4 +1,10 @@
 <?php
+$actors = $GLOBALS['actors'] ?? [];
+$currentPage = $GLOBALS['currentPage'] ?? 1;
+$totalPages = $GLOBALS['totalPages'] ?? 1;
+$pageTitle = $GLOBALS['pageTitle'] ?? 'Danh sách diễn viên';
+?>
+<?php
 require_once __DIR__ . '/../../Models/PNem06/Actor.php';
 
 class ActorController {

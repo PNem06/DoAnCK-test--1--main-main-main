@@ -59,7 +59,14 @@ $totalNews = isset($GLOBALS['totalNews']) ? $GLOBALS['totalNews'] : (count($news
                 <div class="position-relative overflow-hidden" style="height: 240px;">
                     <div class="gradient-overlay"></div>
                     <div class="card-img-top h-100 d-flex align-items-center justify-content-center position-relative p-4">
-                        <i class="fas fa-film fa-4x text-white opacity-75 position-relative z-2"></i>
+                        <?php if (!empty($news['New_Img'])): ?>
+                        <img src="uploads/news/<?= htmlspecialchars($news['New_Img']) ?>" 
+                        class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
+                        alt="<?= htmlspecialchars($news['New_Title']) ?>">
+                        <?php else: ?>
+                            <i class="fas fa-film fa-4x text-white opacity-75 position-relative z-2"></i>
+                        <?php endif; ?>
+
                         <?php if ($index < 2): ?>
                         <span class="position-absolute top-3 end-3 badge bg-danger border border-white shadow-lg px-3 py-2">
                             <i class="fas fa-fire me-1"></i>HOT

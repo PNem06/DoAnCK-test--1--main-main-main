@@ -1,3 +1,9 @@
+<?php
+$actors = $GLOBALS['actors'] ?? [];
+$currentPage = $GLOBALS['currentPage'] ?? 1;
+$totalPages = $GLOBALS['totalPages'] ?? 1;
+$pageTitle = $GLOBALS['pageTitle'] ?? 'Danh sách diễn viên';
+?>
 <div class="row mb-4">
     <div class="col-12">
         <h2 class="text-white mb-4 text-center">
