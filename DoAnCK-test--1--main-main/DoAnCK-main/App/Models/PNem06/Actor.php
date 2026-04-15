@@ -172,5 +172,36 @@ class Actor {
             return [];
         }
     }
+    // ✅ THÊM METHOD NÀY VÀO class Actor
+public function getMoviesByActorWithCount($actor_id) {
+    try {
+        $sql = "CALL sp_GetMoviesByActorWithCount(:actor_id)"; // Nếu có SP này
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':actor_id', $actor_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $data = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $stmt->closeCursor();
+
+        return $data ?: [];
+    } catch (PDOException $e) {
+        error_log("Error in getMoviesByActorWithCount: " . $e->getMessage());
+        
+        // ✅ FALLBACK: Query thủ công nếu SP không tồn tại
+        $sql = "SELECT m.*, 
+                       (SELECT COUNT(*) FROM tbl_character c2 WHERE c2.Actor_ID = :actor_id2) as movie_count
+                FROM tbl_character c
+                JOIN tbl_movie m ON c.Movie_ID = m.Movie_ID
+                WHERE c.Actor_ID = :actor_id
+                ORDER BY m.Movie_ReleaseDate DESC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':actor_id', $actor_id, PDO::PARAM_INT);
+        $stmt->bindParam(':actor_id2', $actor_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+}
 
 }

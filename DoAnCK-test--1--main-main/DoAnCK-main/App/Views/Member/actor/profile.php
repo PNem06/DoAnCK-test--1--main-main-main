@@ -32,7 +32,7 @@
 
             <div class="mt-2">
                 <span class="badge bg-primary">
-                    🎬 <?= !empty($movies) ? count($movies) : 0 ?> phim
+                    🎬 <?= $movieCount ?? 0 ?> phim
                 </span>
             </div>
         </div>
@@ -55,37 +55,41 @@
 <!-- MOVIES -->
 <?php if (!empty($movies)): ?>
 <div class="card mt-4 p-4 shadow-sm" style="border-radius: 20px;">
-    <h4 class="mb-3">🎬 Phim tham gia</h4>
+    <h4 class="mb-3">🎬 Phim tham gia (<?= count($movies) ?> phim)</h4>
 
     <div class="row">
         <?php foreach (array_slice($movies, 0, 12) as $movie): ?>
         <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-
             <a href="index.php?controller=movie&action=showDetail&id=<?= $movie->Movie_ID ?>" 
                class="text-decoration-none text-dark">
 
                 <div class="card h-100 shadow-sm hover-card">
-
-                    <img src="uploads/movies/<?= $movie->Movie_Img ?? 'default-poster.png' ?>" 
-                         class="card-img-top"
-                         style="height: 200px; object-fit: cover;">
+                    <?php if ($movie->Movie_Img): ?>
+                    <img src="uploads/movies/<?= htmlspecialchars($movie->Movie_Img) ?>" 
+                         class="card-img-top" style="height: 200px; object-fit: cover;">
+                    <?php else: ?>
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center text-white" 
+                         style="height: 200px;">
+                        <i class="fas fa-film fa-3x"></i>
+                    </div>
+                    <?php endif; ?>
 
                     <div class="card-body p-2">
-                        <h6 class="mb-1">
-                            <?= htmlspecialchars(substr($movie->Movie_Title, 0, 25)) ?>...
-                        </h6>
+                        <h6 class="mb-1 fw-bold"><?= htmlspecialchars(substr($movie->Movie_Title, 0, 25)) ?>...</h6>
                         <small class="text-muted">
-                            <?= $movie->Movie_ReleaseDate ?? 'N/A' ?>
+                            <?= $movie->Movie_ReleaseDate ? date('d/m/Y', strtotime($movie->Movie_ReleaseDate)) : 'N/A' ?>
                         </small>
                     </div>
-
                 </div>
-
             </a>
-
         </div>
         <?php endforeach; ?>
     </div>
+</div>
+<?php else: ?>
+<div class="card mt-4 p-4 text-center bg-light">
+    <i class="fas fa-video-slash fa-3x text-muted mb-3"></i>
+    <h5 class="text-muted">Chưa có phim nào</h5>
 </div>
 <?php endif; ?>
 

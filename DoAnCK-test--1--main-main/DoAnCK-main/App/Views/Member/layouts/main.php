@@ -117,20 +117,36 @@ nav.navbar {
                 <i class="fas fa-film me-2 text-warning"></i>Điện ảnh & Sao
             </a>
             
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?controller=home&action=movies">
-                    <i class="fas fa-film me-1"></i>Tin phim</a></li>
-                <!-- Thay link "Phim" trong navbar -->
-                <li class="nav-item">
-                    <a class="nav-link" href="index.php?controller=movie">
-                        <i class="fas fa-clapperboard me-1"></i>Phim
-                    </a>
-                </li>
-                <li class="nav-item"><a class="nav-link" href="index.php?controller=home&action=actors">
-                    <i class="fas fa-users me-1"></i>Tin Sao</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php?controller=actor">
-                    <i class="fas fa-users me-1"></i>Diễn viên</a></li>
+              <ul class="navbar-nav me-auto">
+                            <li class="nav-item">
+                <a class="nav-link" href="index.php">
+                    Trang chủ
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?controller=home&action=movies">
+                    Tin phim
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?controller=movie">
+                    Phim
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?controller=home&action=actors">
+                    Tin sao
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="index.php?controller=actor">
+                    Diễn viên
+                </a>
+            </li>
             </ul>
 
             <!-- Search Form -->

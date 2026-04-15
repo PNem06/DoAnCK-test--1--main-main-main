@@ -113,31 +113,33 @@ $studios = $GLOBALS['studios'] ?? [];
         <?php foreach ($actors as $actor): ?>
         <div class="col-md-6 mb-3">
 
-            <a href="index.php?controller=actor&action=showProfile&id=<?= $actor['Actor_ID'] ?>"  
+            <a href="index.php?controller=actor&action=detail&id=<?= $actor['Actor_ID'] ?>"  
                class="text-decoration-none">
 
-                <div class="card actor-card p-3 h-100 border-0 shadow-sm">
+                <!-- TRONG PHẦN ACTORS -->
+<div class="card-body p-3 h-100 border-0 shadow-sm">
+    <div class="d-flex align-items-center">
+        <!-- AVATAR -->
+        <div class="avatar me-3">
+            <?= strtoupper(substr($actor['Actor_Name'], 0, 1)) ?>
+        </div>
 
-                    <div class="d-flex align-items-center">
-
-                        <!-- AVATAR -->
-                        <div class="avatar me-3">
-                            <?= strtoupper(substr($actor['Actor_Name'], 0, 1)) ?>
-                        </div>
-
-                        <!-- INFO -->
-                        <div>
-                            <div class="fw-bold text-dark">
-                                <?= htmlspecialchars($actor['Actor_Name']) ?>
-                            </div>
-                            <small class="text-muted">
-                                Nhấn để xem chi tiết
-                            </small>
-                        </div>
-
-                    </div>
-
-                </div>
+        <!-- INFO -->
+        <div class="flex-grow-1">
+            <div class="fw-bold text-dark">
+                <?= htmlspecialchars($actor['Actor_Name']) ?>
+            </div>
+            <!-- ✅ THÊM SỐ PHIM -->
+            <small class="text-success">
+                <i class="fas fa-film me-1"></i>
+                <?= $actor['movie_count'] ?? 0 ?> phim
+            </small>
+            <small class="text-muted d-block">
+                Nhấn để xem chi tiết
+            </small>
+        </div>
+    </div>
+</div>
 
             </a>
 

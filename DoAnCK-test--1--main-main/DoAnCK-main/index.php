@@ -1,26 +1,24 @@
 <?php
 
-// 🔥 LOAD MODEL TRƯỚC (QUAN TRỌNG NHẤT)
 require_once 'App/Models/MonUkou/Account.php';
-
 session_start();
-
-// 🔥 CHẶN CHƯA LOGIN
-if (!isset($_SESSION['user_obj'])) {
-    $controller = $_GET['controller'] ?? '';
-
-    if ($controller !== 'account') {
-        header("Location: index.php?controller=account&action=login");
-        exit;
-    }
-}
 
 require_once 'Config/database.php';
 require_once 'Config/config.php';
 
 ob_start();
 
+// CHẶN LOGIN
+if (!isset($_SESSION['user_obj'])) {
+    $controllerCheck = $_GET['controller'] ?? '';
+    if ($controllerCheck !== 'account') {
+        header("Location: index.php?controller=account&action=login");
+        exit;
+    }
+}
+
 try {
+
     $controller = $_GET['controller'] ?? 'home';
     $action = $_GET['action'] ?? 'index';
     $page = $_GET['page'] ?? 1;
@@ -30,100 +28,71 @@ try {
 
         // ================= ADMIN =================
         case 'admin':
-                require_once 'App/Controllers/MonUkou/AdminController.php';
-                $ctrl = new \App\Controllers\MonUkou\AdminController();
+            require_once 'App/Controllers/MonUkou/AdminController.php';
+            $ctrl = new \App\Controllers\MonUkou\AdminController();
 
-                // 🔥 CHẶN KHÔNG PHẢI ADMIN
-                if (!isset($_SESSION['user_obj']) || $_SESSION['user_obj']->getRole() != 1) {
-                    header("Location: index.php");
-                    exit;
-                }
+            if (!isset($_SESSION['user_obj']) || $_SESSION['user_obj']->getRole() != 1) {
+                header("Location: index.php");
+                exit;
+            }
 
-                switch ($action) {
-                    case 'dashboard':
-                        $ctrl->dashboard();
-                        break;
-
-                    case 'addpost':
-                        require 'App/Views/Admin/addpost.php';
-                        break;
-
-                    case 'detailpost':
-                        require 'App/Views/Admin/detailpost.php';
-                        break;
-
-                    case 'editpost':
-                        require 'App/Views/Admin/editpost.php';
-                        break;
-
-                    default:
-                        $ctrl->dashboard();
-                        break;
-                }
-                break;
+            if ($action === 'dashboard') $ctrl->dashboard();
+            else $ctrl->dashboard();
+            break;
 
         // ================= ACCOUNT =================
         case 'account':
-        require_once 'App/Controllers/MonUkou/AccountController.php';
-        $ctrl = new \App\Controllers\MonUkou\AccountController();
+            require_once 'App/Controllers/MonUkou/AccountController.php';
+            $ctrl = new \App\Controllers\MonUkou\AccountController();
 
-        if ($action === 'login') {
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $ctrl->login(Database::getInstance()->getConnection());
-            } else {
-                $ctrl->showLogin();
+            if ($action === 'login') {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $ctrl->login(Database::getInstance()->getConnection());
+                } else {
+                    $ctrl->showLogin();
+                }
+            } elseif ($action === 'profile') {
+                $ctrl->profile();
+            } elseif ($action === 'updateProfile') {
+                $ctrl->updateProfile();
+            } elseif ($action === 'logout') {
+                $ctrl->logout();
             }
-        }
-
-        elseif ($action === 'profile') {
-            $ctrl->profile();
-        }
-
-        elseif ($action === 'updateProfile') {   // 🔥 THÊM DÒNG NÀY
-            $ctrl->updateProfile();
-        }
-
-        elseif ($action === 'logout') {
-            $ctrl->logout();
-        }
-
-        break;
+            break;
 
         // ================= HOME =================
         case 'home':
             require_once 'App/Controllers/PNem06/HomeController.php';
             $ctrl = new HomeController(Database::getInstance()->getConnection());
-            $ctrl->index($page);
-            break;
-        
-        
 
-        case 'search':
-            require_once 'App/Controllers/TNhu2006/SearchController.php';
-            $ctrl = new SearchController();
-
-            if ($action === 'ajax') {
-                $ctrl->ajax();
-            }
+            if ($action === 'movies') $ctrl->movies($page);
+            elseif ($action === 'actors') $ctrl->actors($page);
+            else $ctrl->index($page);
             break;
 
+        // ================= MOVIE =================
         case 'movie':
-            require_once 'App/Controllers/PNem06/HomeController.php';
-            $ctrl = new HomeController(Database::getInstance()->getConnection());
+            require_once 'App/Controllers/birb109/MovieController.php';
+            $ctrl = new MovieController(Database::getInstance()->getConnection());
 
-            if ($action === 'showDetail') {
-                $ctrl->showNewsDetail($id);
+            if ($action === 'detail' || $action === 'showDetail') {  // ✅ HỖ TRỢ CẢ 2
+                $ctrl->showDetail($id);
             } else {
-                $ctrl->movies($page);
+                $ctrl->index($page);
             }
             break;
 
+        // ================= ACTOR =================
         case 'actor':
-            require_once 'App/Controllers/PNem06/HomeController.php';
-            $ctrl = new HomeController(Database::getInstance()->getConnection());
+    require_once 'App/Controllers/PNem06/ActorController.php';
+    $ctrl = new ActorController();
+    if ($action === 'detail' || $action === 'showProfile') {
+        $ctrl->showProfile($id);
+    } else {
+        $ctrl->index($page);
+    }
+    break;
 
-            $ctrl->actors($page);
-            break;
         // ================= DEFAULT =================
         default:
             require_once 'App/Controllers/PNem06/HomeController.php';
@@ -138,7 +107,6 @@ try {
 
 $content = ob_get_clean();
 
-// 🔥 KHÔNG LOAD LAYOUT KHI LOGIN
 if (($controller ?? '') === 'account' && ($action ?? '') === 'login') {
     echo $content;
 } else {

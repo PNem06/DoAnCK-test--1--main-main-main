@@ -86,7 +86,7 @@ $totalMovies = $GLOBALS['totalMovies'] ?? 0;
                         </span>
                         <?php endif; ?>
                         
-                        <a href="index.php?controller=movie&action=showDetail&id=<?= $movie['Movie_ID'] ?>" 
+                        <a href="index.php?controller=movie&action=detail&id=<?= $movie['Movie_ID'] ?>" 
                            class="btn btn-outline-primary btn-sm px-4">
                             <i class="fas fa-eye me-1"></i>Xem chi tiết
                         </a>

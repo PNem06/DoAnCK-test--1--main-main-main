@@ -317,5 +317,26 @@ public function getStudiosByMovie($movie_id) {
         return [];
     }
 }
-}
+    /**
+ * Lấy actors kèm số phim tham gia
+ */
+// ✅ THÊM VÀO class Movie - SỬA $this->conn thay vì $this->db
+public function getActorsByMovieWithCount($movie_id) {
+    try {
+        $sql = "SELECT a.*, 
+                       (SELECT COUNT(*) FROM tbl_character c WHERE c.Actor_ID = a.Actor_ID) as movie_count
+                FROM tbl_character c
+                JOIN tbl_actor a ON c.Actor_ID = a.Actor_ID
+                WHERE c.Movie_ID = ?
+                GROUP BY a.Actor_ID
+                ORDER BY a.Actor_Name";
+        
+        $stmt = $this->conn->prepare($sql);  // ✅ $this->conn thay vì $this->db
+        $stmt->execute([intval($movie_id)]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error in getActorsByMovieWithCount: " . $e->getMessage());
+        return [];
+    }
+}}
 ?>

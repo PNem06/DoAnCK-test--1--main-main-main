@@ -23,8 +23,8 @@
                 </div>
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">
-                        <a href="index.php?controller=actor&action=showProfile&id=<?= $actor->Actor_ID ?>" 
-                           class="text-decoration-none fw-bold text-dark">
+                        <a href="index.php?controller=actor&action=detail&id=<?= $actor->Actor_ID ?>" 
+                        class="text-decoration-none fw-bold text-dark">
                             <?= htmlspecialchars($actor->Actor_Name ?? 'N/A') ?>
                         </a>
                     </h5>
@@ -35,8 +35,8 @@
                         <i class="fas fa-film me-1"></i>
                         <?= $actor->movie_count ?> phim 
                     </p>
-                    <a href="index.php?controller=actor&action=showProfile&id=<?= $actor->Actor_ID ?>" 
-                       class="btn btn-primary w-100 mt-auto">
+                    <a href="index.php?controller=actor&action=detail&id=<?= $actor->Actor_ID ?>" 
+                    class="btn btn-primary w-100 mt-auto">
                         <i class="fas fa-eye me-2"></i>Xem tiểu sử
                     </a>
                 </div>

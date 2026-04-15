@@ -15,50 +15,50 @@ class MovieController {
         $limit = 6;
         $offset = ($page - 1) * $limit;
         
-        // Lấy danh sách phim phân trang
         $movies = $this->getMoviesPaginated($offset, $limit);
         $totalMovies = $this->getTotalMovies();
         $totalPages = ceil($totalMovies / $limit);
         
-        // Gán global variables cho view
         $GLOBALS['movies'] = $movies;
         $GLOBALS['totalPages'] = $totalPages;
         $GLOBALS['currentPage'] = $page;
         $GLOBALS['totalMovies'] = $totalMovies;
         $GLOBALS['pageTitle'] = '🎬 Danh sách tất cả phim';
         
-        include __DIR__ . '/../../Views/member/movie/list.php';
+        include __DIR__ . '/../../Views/Member/movie/list.php';
     }
     
     /**
-     * 🔥 CHI TIẾT PHIM
+     * 🔥 CHI TIẾT PHIM - HOÀN CHỈNH
      */
     public function showDetail($movie_id) {
-    require_once __DIR__ . '/../../Models/birb109/Movie.php';
-    $movieModel = new Movie();
+        require_once __DIR__ . '/../../Models/birb109/Movie.php';
+        $movieModel = new Movie();
 
-    $movie = $movieModel->getFullDetail($movie_id);
-    $genres = $movieModel->getGenresByMovie($movie_id);
-    $actors = $movieModel->getActorsByMovie($movie_id);
+        // ✅ LẤY TẤT CẢ DATA
+        $movie = $movieModel->getFullDetail($movie_id);
+        if (!$movie) {
+            $_SESSION['error'] = 'Phim không tồn tại!';
+            header('Location: index.php?controller=movie');
+            exit;
+        }
 
-    // 🔥 thêm 2 cái này
-    $directors = $movieModel->getDirectorsByMovie($movie_id);
-    $studios = $movieModel->getStudiosByMovie($movie_id);
+        $genres = $movieModel->getGenresByMovie($movie_id);
+        $actors = $movieModel->getActorsByMovieWithCount($movie_id);  // ✅ Có movie_count
+        $directors = $movieModel->getDirectorsByMovie($movie_id);
+        $studios = $movieModel->getStudiosByMovie($movie_id);
 
-    if (!$movie) {
-        $_SESSION['error'] = 'Phim không tồn tại!';
-        header('Location: index.php?controller=movie');
-        exit;
+        // ✅ SET GLOBAL VARIABLES CHO VIEW
+        $GLOBALS['movie'] = $movie;
+        $GLOBALS['genres'] = $genres;
+        $GLOBALS['actors'] = $actors;
+        $GLOBALS['directors'] = $directors;
+        $GLOBALS['studios'] = $studios;
+        $GLOBALS['pageTitle'] = $movie['Movie_Title'];
+
+        // ✅ INCLUDE VIEW
+        include __DIR__ . '/../../Views/Member/movie/detail.php';
     }
-
-    $GLOBALS['movie'] = $movie;
-    $GLOBALS['genres'] = $genres;
-    $GLOBALS['actors'] = $actors;
-    $GLOBALS['directors'] = $directors; // 🔥 thêm
-    $GLOBALS['studios'] = $studios;     // 🔥 thêm
-
-    include __DIR__ . '/../../Views/member/movie/detail.php';
-}
     
     // ================= PRIVATE METHODS =================
     
