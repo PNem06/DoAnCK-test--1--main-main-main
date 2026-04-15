@@ -11,8 +11,8 @@ if (!isset($_SESSION['user_obj'])) {
     $controller = $_GET['controller'] ?? '';
 
     if ($controller !== 'account') {
-        header("Location: login.php");
-        exit;
+        header("Location: index.php?controller=account&action=login");
+exit;
     }
 }
 ?>
@@ -87,6 +87,25 @@ if (!isset($_SESSION['user_obj'])) {
             transform: translateY(-5px) scale(1.01) !important;
         }
     }
+    .navbar {
+    z-index: 99999 !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+main {
+    position: relative;
+    z-index: 1;
+}
+
+.gradient-overlay {
+    pointer-events: none;
+}
+nav.navbar {
+    z-index: 999999 !important;
+}
     </style>
 </head>
 <body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -247,16 +266,12 @@ document.addEventListener("click", function(e){
 });
 
 function getCurrentContext() {
+    const controller = new URLSearchParams(window.location.search).get("controller");
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const controller = urlParams.get("controller");
+    if (controller === "actor") return "actor";
+    if (controller === "movie") return "movie";
+    if (controller === "news") return "news";
 
-    // map lại cho chắc chắn
-    switch(controller) {
-        case "actor": return "actor";
-        case "movie": return "movie";
-        case "news": return "news";
-        default: return "home";
-    }
+    return "home";
 }
 </script>

@@ -95,7 +95,35 @@ try {
             $ctrl = new HomeController(Database::getInstance()->getConnection());
             $ctrl->index($page);
             break;
+        
+        
 
+        case 'search':
+            require_once 'App/Controllers/TNhu2006/SearchController.php';
+            $ctrl = new SearchController();
+
+            if ($action === 'ajax') {
+                $ctrl->ajax();
+            }
+            break;
+
+        case 'movie':
+            require_once 'App/Controllers/PNem06/HomeController.php';
+            $ctrl = new HomeController(Database::getInstance()->getConnection());
+
+            if ($action === 'showDetail') {
+                $ctrl->showNewsDetail($id);
+            } else {
+                $ctrl->movies($page);
+            }
+            break;
+
+        case 'actor':
+            require_once 'App/Controllers/PNem06/HomeController.php';
+            $ctrl = new HomeController(Database::getInstance()->getConnection());
+
+            $ctrl->actors($page);
+            break;
         // ================= DEFAULT =================
         default:
             require_once 'App/Controllers/PNem06/HomeController.php';

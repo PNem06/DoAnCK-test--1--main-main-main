@@ -13,7 +13,7 @@ class SearchController {
 
         header('Content-Type: application/json; charset=utf-8');
 
-        $context = $_GET['context'] ?? 'home';
+        $context = $_GET['context'] ?? 'global';
         $keyword = trim($_GET['keyword'] ?? '');
 
         if ($keyword === '') {
@@ -21,24 +21,18 @@ class SearchController {
             exit;
         }
 
-        $results = [];
-
-        // 🔥 LIKE kiểu autocomplete: prefix + contains
         $like1 = $keyword . '%';
         $like2 = '%' . $keyword . '%';
+
+        $results = [];
 
         // ================= ACTOR =================
         if ($context === 'actor') {
 
             $sql = "SELECT Actor_ID, Actor_Name
                     FROM tbl_actor
-                    WHERE Actor_Name LIKE ?
-                       OR Actor_Name LIKE ?
-                    ORDER BY 
-                        CASE 
-                            WHEN Actor_Name LIKE ? THEN 1
-                            ELSE 2
-                        END
+                    WHERE Actor_Name LIKE ? OR Actor_Name LIKE ?
+                    ORDER BY CASE WHEN Actor_Name LIKE ? THEN 1 ELSE 2 END
                     LIMIT 10";
 
             $stmt = $this->mysqli->prepare($sql);
@@ -60,13 +54,8 @@ class SearchController {
 
             $sql = "SELECT Movie_ID, Movie_Title
                     FROM tbl_movie
-                    WHERE Movie_Title LIKE ?
-                       OR Movie_Title LIKE ?
-                    ORDER BY 
-                        CASE 
-                            WHEN Movie_Title LIKE ? THEN 1
-                            ELSE 2
-                        END
+                    WHERE Movie_Title LIKE ? OR Movie_Title LIKE ?
+                    ORDER BY CASE WHEN Movie_Title LIKE ? THEN 1 ELSE 2 END
                     LIMIT 10";
 
             $stmt = $this->mysqli->prepare($sql);
@@ -88,13 +77,8 @@ class SearchController {
 
             $sql = "SELECT New_ID, New_Title
                     FROM tbl_new
-                    WHERE New_Title LIKE ?
-                       OR New_Title LIKE ?
-                    ORDER BY 
-                        CASE 
-                            WHEN New_Title LIKE ? THEN 1
-                            ELSE 2
-                        END
+                    WHERE New_Title LIKE ? OR New_Title LIKE ?
+                    ORDER BY CASE WHEN New_Title LIKE ? THEN 1 ELSE 2 END
                     LIMIT 10";
 
             $stmt = $this->mysqli->prepare($sql);
@@ -111,14 +95,13 @@ class SearchController {
             }
         }
 
-        // ================= DEFAULT =================
+        // ================= GLOBAL (CHO FILE MỚI) =================
         else {
 
             $sql = "SELECT New_ID, New_Title
                     FROM tbl_new
-                    WHERE New_Title LIKE ?
-                       OR New_Title LIKE ?
-                    LIMIT 5";
+                    WHERE New_Title LIKE ? OR New_Title LIKE ?
+                    LIMIT 8";
 
             $stmt = $this->mysqli->prepare($sql);
             $stmt->bind_param("ss", $like1, $like2);
