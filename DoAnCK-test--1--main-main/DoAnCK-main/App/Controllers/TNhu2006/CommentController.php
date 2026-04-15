@@ -1,6 +1,7 @@
 <?php
-require_once __DIR__ . '/../Models/Comment.php';
-require_once __DIR__ . '/../Config/database.php';
+
+require_once __DIR__ . '/../../Models/TNhu2006/Comment.php';
+require_once __DIR__ . '/../../../Config/database.php';
 
 class CommentController {
     private $commentModel;
@@ -14,38 +15,40 @@ class CommentController {
      * Nhận bình luận từ Form -> Gọi Model lưu vào DB
      */
     public function addComment() {
-        // Kiểm tra phương thức request
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            die('Phương thức không hợp lệ');
-        }
-        
-        // Lấy dữ liệu từ form
-        $news_id = isset($_POST['news_id']) ? (int)$_POST['news_id'] : 0;
-        $account_id = isset($_POST['account_id']) ? (int)$_POST['account_id'] : 0;
-        $comment_data = isset($_POST['comment_data']) ? trim($_POST['comment_data']) : '';
-        
-        // Validate
-        if (!$news_id || !$account_id || empty($comment_data)) {
-            $_SESSION['error'] = 'Vui lòng nhập đầy đủ thông tin';
-            header("Location: index.php?controller=news&action=showDetail&id=$news_id");
-            exit();
-        }
-        
-        // Gọi Model lưu vào DB
-        $this->commentModel->setData($comment_data);
-        $this->commentModel->setDate(date('Y-m-d H:i:s'));
-        $this->commentModel->setAccount($account_id);
-        $this->commentModel->setNews($news_id);
-        
-        $result = $this->commentModel->writeComment();
-        
-        if ($result) {
-            header("Location: index.php?controller=news&action=showDetail&id=$news_id");
-            exit();
-        } else {
-            die('Lưu bình luận thất bại');
-        }
+    header('Content-Type: application/json');
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        exit;
     }
+
+    $news_id = (int)($_POST['news_id'] ?? 0);
+    $account_id = (int)($_POST['account_id'] ?? 0);
+    $comment_data = trim($_POST['comment_data'] ?? '');
+
+    if (!$news_id || !$account_id || empty($comment_data)) {
+        echo json_encode(['success' => false, 'message' => 'Thiếu dữ liệu']);
+        exit;
+    }
+
+    $this->commentModel->setData($comment_data);
+    $this->commentModel->setDate(date('Y-m-d H:i:s'));
+    $this->commentModel->setAccount($account_id);
+    $this->commentModel->setNews($news_id);
+
+    if ($this->commentModel->writeComment()) {
+        echo json_encode([
+            'success' => true,
+            'username' => $_SESSION['user_obj']->getUser(),
+            'content' => htmlspecialchars($comment_data),
+            'time' => date('H:i d/m')
+        ]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Lỗi DB']);
+    }
+
+    exit;
+}
     
     /**
      * Xóa bình luận (Admin)
@@ -77,18 +80,6 @@ class CommentController {
      * Lấy kết nối MySQLi
      */
     private function getMysqliConnection() {
-        $config = require __DIR__ . '/../../Config/config.php';
-        $mysqli = new mysqli(
-            $config['db']['host'],
-            $config['db']['user'],
-            $config['db']['pass'],
-            $config['db']['name']
-        );
-        
-        if ($mysqli->connect_error) {
-            die("Kết nối MySQLi thất bại: " . $mysqli->connect_error);
-        }
-        
-        return $mysqli;
-    }
+    return Database::getInstance()->getMysqliConnection();
+}
 }

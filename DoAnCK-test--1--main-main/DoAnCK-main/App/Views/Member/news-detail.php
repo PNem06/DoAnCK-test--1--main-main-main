@@ -112,7 +112,7 @@ if (!$news) {
             <div class="row g-4">
                 <?php foreach ($relatedNews as $rel): ?>
                 <div class="col-md-6 col-lg-3">
-                    <a href="index.php?controller=home&action=showNewsDetail&id=<?= $rel['New_ID'] ?>"
+                    <a href="index.php?controller=news&action=showDetail&id=<?= $rel['New_ID'] ?>"
                        class="text-decoration-none">
                         <div class="card h-100 shadow-lg hover-shadow border-0 bg-gradient-light">
                             <div class="card-body p-4 text-center">
@@ -137,3 +137,62 @@ if (!$news) {
 .hover-shadow:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important; }
 .bg-gradient-light { background: linear-gradient(135deg, #ffffff 0%, #f1f3f4 100%) !important; }
 </style>
+<script>
+document.getElementById("commentForm")?.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let content = document.getElementById("commentContent").value.trim();
+    let newsId = document.getElementById("newsId").value;
+
+    if (!content) {
+        alert("Nhập nội dung đi bro 😅");
+        return;
+    }
+
+    fetch("index.php?controller=comment&action=add", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `news_id=${newsId}&account_id=<?= $_SESSION['user_obj']->getId() ?>&comment_data=${encodeURIComponent(content)}`
+})
+.then(res => res.text()) // 🔥 đổi sang text để debug
+.then(text => {
+    console.log("RAW RESPONSE:", text); // 👈 xem lỗi tại đây
+
+    let data;
+    try {
+        data = JSON.parse(text);
+    } catch (e) {
+        alert("❌ Lỗi JSON → mở console xem chi tiết");
+        return;
+    }
+
+    if (data.success) {
+
+        let html = `
+        <div class="p-4 border-bottom">
+            <div class="d-flex align-items-start gap-3">
+                <img src="uploads/<?= $_SESSION['user_obj']->img ?? 'default-avatar.png' ?>"
+                    class="rounded-circle"
+                    style="width:48px;height:48px;object-fit:cover;">
+                <div>
+                    <b>${data.username}</b>
+                    <small class="text-muted ms-2">${data.time}</small>
+                    <p class="mb-0">${data.content}</p>
+                </div>
+            </div>
+        </div>`;
+
+        document.querySelector(".card-body.p-0")
+            .insertAdjacentHTML("afterbegin", html);
+
+        document.getElementById("commentContent").value = "";
+
+    } else {
+        alert(data.message);
+    }
+});
+    });
+;
+</script>

@@ -1,4 +1,5 @@
-<?php
+
+ <?php
 class News {
     private $conn;
 
@@ -13,7 +14,13 @@ class News {
         $stmt = $this->conn->prepare("CALL sp_GetLatestNews(?)");
         $stmt->bind_param("i", $limit);
         $stmt->execute();
-        return $stmt->get_result();
+
+        $result = $stmt->get_result();
+
+        $stmt->close();
+        $this->conn->next_result();
+
+        return $result;
     }
 
     // =========================
@@ -23,16 +30,27 @@ class News {
         $stmt = $this->conn->prepare("CALL sp_GetNewsById(?)");
         $stmt->bind_param("i", $id);
         $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+
+        $result = $stmt->get_result()->fetch_assoc();
+
+        $stmt->close();
+        $this->conn->next_result();
+
+        return $result;
     }
 
     // =========================
-    // INCREASE VIEW
+    // INCREASE VIEW (✔ CHỈ 1 HÀM)
     // =========================
     public function increaseView($id){
         $stmt = $this->conn->prepare("CALL sp_IncreaseNewsView(?)");
         $stmt->bind_param("i", $id);
-        return $stmt->execute();
+        $stmt->execute();
+
+        $stmt->close();
+        $this->conn->next_result();
+
+        return true;
     }
 
     // =========================
@@ -42,17 +60,29 @@ class News {
         $stmt = $this->conn->prepare("CALL sp_GetCommentsByNews(?)");
         $stmt->bind_param("i", $news_id);
         $stmt->execute();
-        return $stmt->get_result();
+
+        $result = $stmt->get_result();
+
+        $stmt->close();
+        $this->conn->next_result();
+
+        return $result;
     }
 
     // =========================
-    // RELATED NEWS (3 PARAMS - FIXED)
+    // RELATED NEWS
     // =========================
     public function getRelated($newsId, $category, $limitNum){
         $stmt = $this->conn->prepare("CALL sp_GetRelatedNews(?, ?, ?)");
         $stmt->bind_param("isi", $newsId, $category, $limitNum);
         $stmt->execute();
-        return $stmt->get_result();
+
+        $result = $stmt->get_result();
+
+        $stmt->close();
+        $this->conn->next_result();
+
+        return $result;
     }
 }
 ?>

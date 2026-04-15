@@ -93,6 +93,30 @@ try {
     }
     break;
 
+    // ================= NEWS =================
+    case 'news':
+        require_once 'App/Controllers/TNhu2006/NewsController.php';
+        $ctrl = new NewsController();
+
+        if ($action === 'showDetail') {
+            $ctrl->showDetail($id);
+        } else {
+            $ctrl->index();
+        }
+        break;
+
+    // ================= COMMENT =================
+
+    case 'comment':
+    require_once 'App/Controllers/TNhu2006/CommentController.php';
+    $ctrl = new CommentController();
+
+    if ($action === 'add') {
+        $ctrl->addComment();
+    } elseif ($action === 'delete') {
+        $ctrl->deleteComment();
+    }
+    break;
         // ================= DEFAULT =================
         default:
             require_once 'App/Controllers/PNem06/HomeController.php';
@@ -106,6 +130,12 @@ try {
 }
 
 $content = ob_get_clean();
+
+// 🔥 FIX AJAX: nếu là comment thì KHÔNG load layout
+if (($controller ?? '') === 'comment') {
+    echo $content;
+    return;
+}
 
 if (($controller ?? '') === 'account' && ($action ?? '') === 'login') {
     echo $content;
